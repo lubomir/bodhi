@@ -83,8 +83,9 @@ ${update.type} update for ${update.beautify_title(amp=True) | n}
 
     var test_gating_passed = '${update.test_gating_passed}';
     var test_gating_required = '${request.registry.settings.get("test_gating.required")}';
-    if (test_gating_required == 'True' && test_gating_passed == 'False') {
-        var summary = '${update.greenwave_summary_string}';
+    var summary = '${update.greenwave_summary_string}';
+    if (test_gating_required == 'True' && test_gating_passed == 'False' &&
+        summary != 'None') {
         $('#resultsdb h3').after(
            '<div class="alert alert-danger">The update can not be pushed: ' + summary + '</div>');
         get_unsatisfied_reqs({
