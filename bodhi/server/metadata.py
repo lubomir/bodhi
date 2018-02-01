@@ -17,6 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """Create metadata files when mashing repositories."""
+from datetime import datetime
 import logging
 import os
 import shelve
@@ -194,8 +195,16 @@ class UpdateInfoMetadata(object):
 
         if update.date_pushed:
             rec.issued_date = update.date_pushed
+        else:
+            # Sometimes we only set the date_pushed after it's pushed out, however,
+            # it seems that Satellite/Spacewalk does not like update entries without issued_date.
+            # Since we know that we are pushing it now, and the next push will get the data
+            # correctly, let's just insert utcnow().
+            rec.issued_date = datetime.utcnow()
         if update.date_modified:
             rec.updated_date = update.date_modified
+        else:
+            rec.updated_date = datetime.utcnow()
 
         col = cr.UpdateCollection()
         col.name = to_bytes(update.release.long_name)
